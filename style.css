@@ -17,4 +17,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  /* remove intrefere with mouse events on canvas */
+  pointer-events: none; 
 }

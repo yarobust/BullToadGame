@@ -2,7 +2,7 @@ window.addEventListener('load', function(){
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
   //set up inital dimensions
-  canvas.width = 1200;
+  canvas.width = 1280;
   canvas.height = 720;
 
   ctx.fillStyle = 'white';
@@ -12,7 +12,7 @@ window.addEventListener('load', function(){
   class Player {
     constructor(game){
       this.game = game;
-      //hitbox
+      //hitbox|start position
       this.collisionX = this.game.width * 0.5;
       this.collisionY = this.game.height * 0.5;
       this.collisionRadius = 30;
@@ -32,9 +32,32 @@ window.addEventListener('load', function(){
     //passing reference of main canvas
     constructor(canvas){
       this.canvas = canvas;
-      this.width = this.canvas.width;
-      this.height = this.canvas.height;
+      this.width = canvas.width;
+      this.height = canvas.height;
       this.player = new Player(this);
+      this.mouse = {
+        x: this.width * 0.5,
+        y: this.height * 0.5,
+        pressed: false
+      }
+      //event listeners
+      canvas.addEventListener('mousedown', (e) => {
+        this.mouse.x = e.offsetX;
+        this.mouse.y = e.offsetY;
+        this.mouse.pressed = true;
+        console.log(this.mouse);
+      });
+      canvas.addEventListener('mouseup', (e) => {
+        this.mouse.x = e.offsetX;
+        this.mouse.y = e.offsetY;
+        this.mouse.pressed = false;
+        console.log(this.mouse);
+      });
+      canvas.addEventListener('mousemove', (e) => {
+        this.mouse.x = e.offsetX;
+        this.mouse.y = e.offsetY;
+      });
+      
     }
     render(context){
       this.player.draw(context);
