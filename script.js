@@ -36,7 +36,6 @@ window.addEventListener('load', function(){
     draw(context){
       context.beginPath();
       context.arc(this.collisionX,this.collisionY, this.collisionRadius, 0,Math.PI * 2);
-      
       context.save(); //saves the entire state onto a stack
       context.globalAlpha = 0.5;
       context.fill();
@@ -63,6 +62,24 @@ window.addEventListener('load', function(){
       this.collisionY += this.speedY * this.speedModifier;
     }
   }
+
+  class Obstacle {
+    constructor(game){
+      this.game = game;
+      this.collisionX = Math.random() * game.width;
+      this.collisionY = Math.random() * game.height;
+      this.collisionRadius = 60;
+    }
+    draw(context){
+      context.beginPath();
+      context.arc(this.collisionX,this.collisionY, this.collisionRadius, 0,Math.PI * 2);
+      context.save(); //saves the entire state onto a stack
+      context.globalAlpha = 0.5;
+      context.fill();
+      context.restore(); //restore most recently saved state
+      context.stroke();
+    }
+  }
   class Game {
     //passing reference of main canvas
     constructor(canvas){
@@ -75,6 +92,8 @@ window.addEventListener('load', function(){
         y: this.height * 0.5,
         pressed: false
       }
+      this.numberOfObstacles = 50;
+      this.obstacles = [];
       //event listeners
       canvas.addEventListener('mousedown', e => {
         this.mouse.x = e.offsetX;
@@ -97,13 +116,39 @@ window.addEventListener('load', function(){
     render(context){
       this.player.draw(context);
       this.player.update();
+      this.obstacles.forEach(obstacle => obstacle.draw(context))
+    }
+    init(){
+      let attempts = 0;
+      //instantiate obstacles
+      while(this.obstacles.length < this.numberOfObstacles && attempts < 500){
+        const testObstacle = new Obstacle(this);
+        let overlap = false;
+        //check for overlapping 
+        this.obstacles.forEach(obstacle => {
+          const dx = testObstacle.collisionX - obstacle.collisionX;
+          const dy = testObstacle.collisionY - obstacle.collisionY;
+          const distance = Math.hypot(dy, dx);
+          const sumOfRadii = testObstacle.collisionRadius + obstacle.collisionRadius;
+          if(distance < sumOfRadii){
+            overlap = true;
+          }
+        });
+        if(!overlap){
+          this.obstacles.push(testObstacle);
+        }
+        
+        attempts++;
+      }
     }
   }
 
 
   //creaet instance of a game
   const game = new Game(canvas);
-
+  game.init();
+  console.log(game);
+  
   function animate(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     game.render(ctx);
