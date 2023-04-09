@@ -48,18 +48,18 @@ window.addEventListener('load', function(){
 
     }
     update(){
-      this.dx = this.game.mouse.x - this.collisionX;
-      this.dy = this.game.mouse.y - this.collisionY;
+      this.dx = this.game.mouse.x - this.collisionX; //make as const 
+      this.dy = this.game.mouse.y - this.collisionY; //make as const
       const distance = Math.hypot(this.dx, this.dy);
       if(distance > this.speedModifier){
-        this.speedX = this.dx/distance || 0;
-        this.speedY = this.dy/distance || 0;
+        this.speedX = this.dx/distance || 0; //remove 0?
+        this.speedY = this.dy/distance || 0; //remove 0?
       } else {
         this.speedX = 0;
         this.speedY = 0;
       }
-      this.collisionX += this.speedX * this.speedModifier;
-      this.collisionY += this.speedY * this.speedModifier;
+      this.collisionX += this.speedX * this.speedModifier; // transfer to if block?
+      this.collisionY += this.speedY * this.speedModifier; // transfer to if block?
     }
   }
 
@@ -69,8 +69,19 @@ window.addEventListener('load', function(){
       this.collisionX = Math.random() * game.width;
       this.collisionY = Math.random() * game.height;
       this.collisionRadius = 60;
+
+      this.image = document.getElementById('obstacles');
+      this.spriteWidth = 250;
+      this.spriteHeight = 250;
+      this.width = this.spriteWidth;
+      this.height = this.spriteHeight;
+      this.spriteX = this.collisionX - this.width * 0.5;
+      this.spriteY = this.collisionY - this.height * 0.8;
+      this.frameX = Math.floor(Math.random() * 4);
+      this.frameY = Math.floor(Math.random() * 3);
     }
     draw(context){
+      context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
       context.beginPath();
       context.arc(this.collisionX,this.collisionY, this.collisionRadius, 0,Math.PI * 2);
       context.save(); //saves the entire state onto a stack
@@ -86,6 +97,7 @@ window.addEventListener('load', function(){
       this.canvas = canvas;
       this.width = canvas.width;
       this.height = canvas.height;
+      this.topMargin = 260;
       this.player = new Player(this);
       this.mouse = {
         x: this.width * 0.5,
@@ -116,7 +128,7 @@ window.addEventListener('load', function(){
     render(context){
       this.player.draw(context);
       this.player.update();
-      this.obstacles.forEach(obstacle => obstacle.draw(context))
+      this.obstacles.forEach(obstacle => obstacle.draw(context));
     }
     init(){
       let attempts = 0;
@@ -124,20 +136,22 @@ window.addEventListener('load', function(){
       while(this.obstacles.length < this.numberOfObstacles && attempts < 500){
         const testObstacle = new Obstacle(this);
         let overlap = false;
+        const distanceBuffer = this.player.collisionRadius * 2 + testObstacle.collisionRadius; // 120 + 1?
         //check for overlapping 
         this.obstacles.forEach(obstacle => {
           const dx = testObstacle.collisionX - obstacle.collisionX;
           const dy = testObstacle.collisionY - obstacle.collisionY;
           const distance = Math.hypot(dy, dx);
-          const sumOfRadii = testObstacle.collisionRadius + obstacle.collisionRadius;
-          if(distance < sumOfRadii){
+          const sumOfRadii = testObstacle.collisionRadius + obstacle.collisionRadius; 
+          if(distance < sumOfRadii + distanceBuffer){ 
             overlap = true;
           }
         });
-        if(!overlap){
+        //check overlapping and that obstacle doesn't go beyond canvas
+        if(!overlap && testObstacle.spriteX > 0 && testObstacle.spriteX < this.width - testObstacle.width && 
+          testObstacle.collisionY > this.topMargin + distanceBuffer && testObstacle.collisionY < this.height - distanceBuffer){
           this.obstacles.push(testObstacle);
         }
-        
         attempts++;
       }
     }
