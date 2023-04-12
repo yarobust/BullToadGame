@@ -6,7 +6,7 @@ export class Obstacle {
     this.collisionY = Math.random() * game.height;
     this.collisionRadius = 60;
 
-    this.image = document.getElementById('obstacles');
+    this.image = /**@type {HTMLImageElement} */ (document.getElementById('obstacles'));
     this.spriteWidth = 250;
     this.spriteHeight = 250;
     this.width = this.spriteWidth;
@@ -16,6 +16,7 @@ export class Obstacle {
     this.frameX = Math.floor(Math.random() * 4);
     this.frameY = Math.floor(Math.random() * 3);
   }
+  /** @param {CanvasRenderingContext2D} context */
   draw(context) {
     context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
     context.beginPath();

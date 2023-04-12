@@ -1,17 +1,15 @@
-import {Game} from './game.js'
+import {Game} from './game.js';
+
+//for debug purposes
+globalThis.startDebugging = false;
+addEventListener('keydown', function (e) {
+  if (e.key == "Control") {
+    globalThis.startDebugging = true;
+    setTimeout(function () { globalThis.startDebugging = false }, 500);
+  }
+});
 
 window.addEventListener('load', function () {
-  //for debug purposes
-  let startDebugging = false;
-  this.addEventListener('keydown', function (e) {
-    if (e.key == "Control") {
-      startDebugging = true;
-      setTimeout(function () { startDebugging = false }, 1000)
-    }
-  });
-
-  /* ------------------------------------------------ */
-  
   const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas1'));
   const ctx = /** @type {CanvasRenderingContext2D}*/ (canvas.getContext('2d'));
   //set up inital dimensions
