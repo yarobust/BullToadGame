@@ -13,9 +13,7 @@ export class Player {
     this.dy = 0;
     this.speedModifier = 5; //sets how fast the playe is    
   }
-  /**
-   * @param {CanvasRenderingContext2D} context
-   */
+  /** @param {CanvasRenderingContext2D} context */
   draw(context) {
     context.beginPath();
     context.arc(this.collisionX, this.collisionY, this.collisionRadius, 0, Math.PI * 2);
@@ -35,7 +33,7 @@ export class Player {
     this.dy = this.game.mouse.y - this.collisionY; //make as const
     const distance = Math.hypot(this.dx, this.dy);
     if (distance > this.speedModifier) {
-      this.speedX = this.dx / distance || 0; //remove 0?
+      this.speedX = this.dx / distance || 0; //remove 0? distance will never be less then speedModifier
       this.speedY = this.dy / distance || 0; //remove 0?
     } else {
       this.speedX = 0;
@@ -46,8 +44,14 @@ export class Player {
 
     //collision player with obstacles
     this.game.obstacles.forEach(obstacle=>{
-      if(this.game.checkCollision(this, obstacle)){
-        console.log('collision');
+      let [collision, distance, sumOfRadii, dx, dy] = this.game.checkCollision(this, obstacle);
+
+      if(collision){
+        const unit_x = dx / distance;
+        const unit_y = dy / distance;
+        console.log(unit_x, unit_y);
+        this.collisionX = obstacle.collisionX + (sumOfRadii + 1) * unit_x;
+        this.collisionY = obstacle.collisionY + (sumOfRadii + 1) * unit_y;
       }
     });
   }

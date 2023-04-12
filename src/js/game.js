@@ -14,7 +14,7 @@ import {Player} from './player.js';
       y: this.height * 0.5,
       pressed: false
     }
-    this.numberOfObstacles = 50;
+    this.numberOfObstacles = 5;
     /** @type {Obstacle[]} */
     this.obstacles = [];
     //event listeners
@@ -37,9 +37,9 @@ import {Player} from './player.js';
   }
   /**@param {CanvasRenderingContext2D} context */
   render(context) {
+    this.obstacles.forEach(obstacle => obstacle.draw(context));
     this.player.draw(context);
     this.player.update();
-    this.obstacles.forEach(obstacle => obstacle.draw(context));
   }
   /**
    * @typedef ICollisional
@@ -51,25 +51,26 @@ import {Player} from './player.js';
    * takes obj a and obj b and compare them
    * @param {ICollisional} a 
    * @param {ICollisional} b 
-   * @returns {boolean}
+   * @returns {Array} array [bool, dist, sumR, dx, dy]
    */
   checkCollision(a, b) {
     const dx = a.collisionX - b.collisionX;
     const dy = a.collisionY - b.collisionY;
     const distance = Math.hypot(dy, dx);
     const sumOfRadii = a.collisionRadius + b.collisionRadius;
-    return (distance < sumOfRadii);
+    return [(distance < sumOfRadii), distance, sumOfRadii, dx, dy];
   }
   init() {
     let attempts = 0;
     //instantiate obstacles
     while (this.obstacles.length < this.numberOfObstacles && attempts < 500) {
       const testObstacle = new Obstacle(this);
-      let overlap = false;
-      const distanceBuffer = this.player.collisionRadius * 2 + testObstacle.collisionRadius; // 120 + 1?
-      //check for overlapping 
+      let overlap = false; //if false then add to obstacles array
+      const distanceBuffer = this.player.collisionRadius * 2 + testObstacle.collisionRadius; // 120 + 1? leave some space between obstacles for player to pass through
+
+      //check obstacle's overlapping with each others
       this.obstacles.forEach(obstacle => {
-        //replace with this.checkCollision() method
+        //replace with this.checkCollision() method?
         const dx = testObstacle.collisionX - obstacle.collisionX;
         const dy = testObstacle.collisionY - obstacle.collisionY;
         const distance = Math.hypot(dy, dx);
@@ -78,7 +79,7 @@ import {Player} from './player.js';
           overlap = true;
         }
       });
-      //check overlapping and that obstacle doesn't go beyond canvas
+      //check that obstacle doesn't go beyond canvas and doesn't overlapping 
       if (!overlap && testObstacle.spriteX > 0 && testObstacle.spriteX < this.width - testObstacle.width &&
         testObstacle.collisionY > this.topMargin + distanceBuffer && testObstacle.collisionY < this.height - distanceBuffer) {
         this.obstacles.push(testObstacle);
