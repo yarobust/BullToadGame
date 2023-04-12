@@ -1,7 +1,5 @@
 export class Player {
-  /**
-   * @param {import("./game.js").Game} game
-   */
+  /**@param {import("./game.js").Game} game*/
   constructor(game) {
     this.game = game;
     //hitbox|start position
@@ -45,9 +43,12 @@ export class Player {
     }
     this.collisionX += this.speedX * this.speedModifier; // transfer to if block?
     this.collisionY += this.speedY * this.speedModifier; // transfer to if block?
-    //collision with obstacles
+
+    //collision player with obstacles
     this.game.obstacles.forEach(obstacle=>{
-      console.log(this.game.checkCollision(this, obstacle));
+      if(this.game.checkCollision(this, obstacle)){
+        console.log('collision');
+      }
     });
   }
 }

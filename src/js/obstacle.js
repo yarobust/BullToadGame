@@ -1,4 +1,5 @@
 export class Obstacle {
+  /**@param {import("./game.js").Game} game*/
   constructor(game) {
     this.game = game;
     this.collisionX = Math.random() * game.width;

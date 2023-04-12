@@ -35,15 +35,12 @@ import {Player} from './player.js';
       }
     });
   }
-  /**
-   * @param {CanvasRenderingContext2D} context
-   */
+  /**@param {CanvasRenderingContext2D} context */
   render(context) {
     this.player.draw(context);
     this.player.update();
     this.obstacles.forEach(obstacle => obstacle.draw(context));
   }
-
   /**
    * @typedef ICollisional
    * @property {number} collisionX
