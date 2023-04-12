@@ -5,7 +5,7 @@ window.addEventListener('load', function () {
   let startDebugging = false;
   this.addEventListener('keydown', function (e) {
     if (e.key == "Control") {
-      startDebugging = !startDebugging;
+      startDebugging = true;
       setTimeout(function () { startDebugging = false }, 1000)
     }
   });
