@@ -6,15 +6,25 @@ export class Player {
     this.collisionX = this.game.width * 0.5;
     this.collisionY = this.game.height * 0.5;
     this.collisionRadius = 30;
-    this.speedX = 0;
-    this.speedY = 0;
+    this.speedX = 0; //remove unused property?
+    this.speedY = 0; //remove unused property? 
     //distance between mouse coordinate and player
-    this.dx = 0;
-    this.dy = 0;
-    this.speedModifier = 5; //sets how fast the playe is    
+    this.dx = 0; //remove unused property? 
+    this.dy = 0; //remove unused property?
+    this.speedModifier = 5; //set how fast the playe is    
+
+    this.image = /** @type {HTMLImageElement} */ (document.getElementById('bull'));
+    this.spriteWidth = 255;
+    this.spriteHeight = 255;
+    this.width = this.spriteWidth;
+    this.height = this.spriteHeight;
+    this.spriteX = this.collisionX - this.width * 0.5;
+    this.spriteY = this.collisionY - this.height * 0.9;
+
   }
   /** @param {CanvasRenderingContext2D} context */
   draw(context) {
+    context.drawImage(this.image, 0, 0 + 256 * 3, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
     context.beginPath();
     context.arc(this.collisionX, this.collisionY, this.collisionRadius, 0, Math.PI * 2);
     context.save(); //saves the entire state onto a stack
@@ -41,12 +51,14 @@ export class Player {
     }
     this.collisionX += this.speedX * this.speedModifier; // transfer to if block?
     this.collisionY += this.speedY * this.speedModifier; // transfer to if block?
-
+    
+    this.spriteX = this.collisionX - this.width * 0.5;
+    this.spriteY = this.collisionY - this.height * 0.9;
     //collision player with obstacles
     this.game.obstacles.forEach(obstacle=>{
       let [collision, distance, sumOfRadii, dx, dy] = this.game.checkCollision(this, obstacle);
 
-      if(collision){
+      if(collision){ //!!!
         const unit_x = dx / distance;
         const unit_y = dy / distance;
         console.log(unit_x, unit_y);

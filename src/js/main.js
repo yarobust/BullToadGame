@@ -1,11 +1,11 @@
 import {Game} from './game.js';
 
 //for debug purposes
-globalThis.startDebugging = false;
+globalThis.sDebug = false;
 addEventListener('keydown', function (e) {
   if (e.key == "Control") {
-    globalThis.startDebugging = true;
-    setTimeout(function () { globalThis.startDebugging = false }, 500);
+    globalThis.sDebug = true;
+    setTimeout(function () { globalThis.sDebug = false }, 500);
   }
 });
 
