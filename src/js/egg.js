@@ -1,3 +1,5 @@
+import {Larva} from './larva.js';
+
 export class Egg {
   /**@param {import("./game.js").Game} game*/
   constructor(game) {
@@ -14,6 +16,10 @@ export class Egg {
     this.height = this.spriteHeight;
     this.spriteX = this.collisionX - this.width * 0.5;//subtract?
     this.spriteY = this.collisionY - this.height * 0.8;//subtract?
+
+    this.hatchTimer = 0;
+    this.hatchInterval = 1000;
+    this.markedForDeletion = false;
   }
 
   /** @param {CanvasRenderingContext2D} context */
@@ -21,24 +27,36 @@ export class Egg {
     context.drawImage(this.image, this.spriteX, this.spriteY, this.width, this.height);
     if (this.game.debug) {
       this.game.drawDebugCircle(this, context);
+      context.textAlign = 'center';
+      context.fillText((this.hatchTimer * 0.001).toFixed(0), this.collisionX, this.collisionY - this.collisionRadius * 3);
     }
   }
 
-  update() {
-    
-    // console.log('egg update');
+  /** @param {number} deltaTime */
+  update(deltaTime) {
+    //handle hatcling of larva
+    if (this.hatchTimer > this.hatchInterval) {
+        this.game.hatchlings.push(new Larva(this.game, this.collisionX, this.collisionY));
+        this.markedForDeletion = true;
+        this.game.removeGameObjects();
+
+    } else {
+      this.hatchTimer += deltaTime;
+    }
+
     let collisionObjects = [this.game.player, ...this.game.obstacles, ...this.game.enemies];
+    //handle collisions with objects
     collisionObjects.forEach((object) => {
       let [collision, distance, sumOfRadii, dx, dy] = this.game.checkCollision(this, object);
       if (collision) {
-        // console.log('player and egg collision');
         const unit_x = dx / distance;
         const unit_y = dy / distance;
         this.collisionX = object.collisionX + (sumOfRadii + 1) * unit_x;
         this.collisionY = object.collisionY + (sumOfRadii + 1) * unit_y;
       }
     });
-    this.spriteX = this.collisionX - this.width * 0.5;//subtract?
-    this.spriteY = this.collisionY - this.height * 0.8;//subtract?
+
+    this.spriteX = this.collisionX - this.width * 0.5;
+    this.spriteY = this.collisionY - this.height * 0.8;
   }
 } 

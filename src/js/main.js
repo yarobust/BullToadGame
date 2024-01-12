@@ -1,14 +1,4 @@
-import {Game} from './game.js';
-
-// //for debug purposes
-// globalThis.sDebug = false;
-// addEventListener('keydown', function (e) {
-//   if (e.key == "Control") {
-//     globalThis.sDebug = true;
-//     setTimeout(function () { globalThis.sDebug = false }, 1500);
-//   }
-// });
-
+import { Game } from './game.js';
 
 window.addEventListener('load', function () {
   const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas1'));
@@ -20,18 +10,20 @@ window.addEventListener('load', function () {
   ctx.fillStyle = 'white';
   ctx.lineWidth = 3;
   ctx.strokeStyle = 'white';
+  ctx.font = '40px Halvetica';
+  ctx.textAlign = 'center';
 
   //creaet instance of a game
   const game = new Game(canvas);
   game.init();
   console.log(game);
-
+  
   let lastTime = 0;
+
   function animate(timeStamp) {
-    const deltaTime = timeStamp - lastTime;
+    const deltaTime = timeStamp - lastTime
     lastTime = timeStamp;
     game.render(ctx, deltaTime);
-
     requestAnimationFrame(animate);
   }
 

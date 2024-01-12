@@ -2,13 +2,16 @@ import { Obstacle } from './obstacle.js';
 import { Player } from './player.js';
 import { Egg } from './egg.js';
 import { Enemy } from './enemy.js';
+import { Larva } from './larva.js';
+
 
 export class Game {
   /** @param {HTMLCanvasElement} canvas - reference of main canvas*/
   constructor(canvas) {
-    this.debug = false; //for debug purposes
-    this.frameCount = 0;
-    this.debugTimer = 0;
+    this.debug = true; //for debug purposes
+    this.frameCount = 0; //for debug purposes
+    this.debugFPS = 0; //for debug purposes
+    this.debugTimer = 0;//for debug purposes
 
     this.canvas = canvas;
     this.width = canvas.width;
@@ -29,11 +32,12 @@ export class Game {
     this.eggs = [];
     this.eggTimer = 0;
     this.eggInterval = 1000;
+    /** @type {Larva[]} */
+    this.hatchlings = [];
     /**@type {Enemy[]} */
     this.enemies = [];
-    /** @type {(Egg | Obstacle | Enemy | Player )[]} */
+    /** @type {(Larva | Egg | Obstacle | Enemy | Player )[]} */
     this.gameObjects = []
-
 
     //fps
     this.fps = 60;
@@ -70,30 +74,35 @@ export class Game {
    * @param {number} deltaTime
   */
   render(context, deltaTime) {
-    // systemise refresh rate
-    this.debugTimer += deltaTime;
+    this.debugTimer += deltaTime; //debug
 
+    // systemise refresh rate
     if (this.timer > this.interval) {
       context.clearRect(0, 0, this.width, this.height);
-      this.gameObjects = [...this.eggs, ...this.enemies, ...this.obstacles, this.player];
+      this.gameObjects = [...this.hatchlings, ...this.eggs, ...this.enemies, ...this.obstacles, this.player];
       //sort by vertical position
       this.gameObjects.sort((a, b) => (a.collisionY - b.collisionY));
       this.gameObjects.forEach((object) => {
         object.draw(context);
-        object.update();
+        object.update(this.interval);
       });
-      
-      if(this.debug) {
-        this.frameCount++;
-        if(this.debugTimer >= 1000) {
-          console.log(this.frameCount);
-          this.frameCount = 0;
-          this.debugTimer %= 1000
-        }
-      }
 
       this.timer %= this.interval;
-      // console.log(this.timer);
+
+      //for debug purposes
+      if (this.debug) {
+        if (this.debugTimer >= 1000) {
+          this.debugFPS = this.frameCount;
+          this.frameCount = 0;
+          this.debugTimer %= 1000;
+        }
+        this.frameCount++;
+        context.save();
+        context.fillStyle = 'red';
+        context.textAlign = 'left';
+        context.fillText(`fps: ${this.debugFPS}`, 0, 100)
+        context.restore();
+      }
     }
     this.timer += deltaTime;
 
@@ -104,7 +113,6 @@ export class Game {
       // console.log(this.eggs);
     }
     this.eggTimer += deltaTime;
-
   }
   /**
    * @typedef ICollisional
@@ -144,8 +152,13 @@ export class Game {
   addEgg() {
     this.eggs.push(new Egg(this));
   }
-  addEnemy(){
+  addEnemy() {
     this.enemies.push(new Enemy(this));
+  }
+  removeGameObjects() {
+    console.log(this.eggs);
+    this.eggs = this.eggs.filter((egg) => !egg.markedForDeletion);
+    this.hatchlings = this.hatchlings.filter((larva) => !larva.markedForDeletion);
   }
   init() {
     for (let i = 0; i < 3; i++) {
