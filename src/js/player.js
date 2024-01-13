@@ -5,7 +5,7 @@ export class Player {
     //hitbox|start position
     this.collisionX = this.game.width * 0.5;
     this.collisionY = this.game.height * 0.5;
-    this.collisionRadius = 25;
+    this.collisionRadius = 35;
     this.speedModifier = 5; //set how fast the playe is (should not be less than zero)
 
     this.image = /** @type {HTMLImageElement} */ (document.getElementById('bull'));
@@ -75,5 +75,11 @@ export class Player {
 
     this.spriteX = this.collisionX - this.width * 0.5; //move to if(distance > this.speedmodifier)
     this.spriteY = this.collisionY - this.height * 0.9; //move to if(distance > this.speedmodifier)
+  }
+  reset() {
+    this.collisionX = this.game.width * 0.5;
+    this.collisionY = this.game.height * 0.5;
+    this.spriteX = this.collisionX - this.width * 0.5;
+    this.spriteY = this.collisionY - this.height * 0.85;
   }
 }

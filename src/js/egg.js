@@ -35,7 +35,8 @@ export class Egg {
   /** @param {number} deltaTime */
   update(deltaTime) {
     //the larva will hatch when the egg has moved to the top edge or when the timer has run out.
-    if (this.hatchTimer > this.hatchInterval || this.collisionY < this.game.topMargin) {
+    //the order of the operators should be as is
+    if (!this.game.gameOver && this.hatchTimer > this.hatchInterval || this.collisionY < this.game.topMargin) {
         this.game.hatchlings.push(new Larva(this.game, this.collisionX, this.collisionY));
         this.markedForDeletion = true;
         this.game.removeGameObjects();
