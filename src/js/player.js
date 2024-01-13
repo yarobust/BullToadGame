@@ -6,7 +6,7 @@ export class Player {
     this.collisionX = this.game.width * 0.5;
     this.collisionY = this.game.height * 0.5;
     this.collisionRadius = 25;
-    this.speedModifier = 3; //set how fast the playe is (should not be less than zero)
+    this.speedModifier = 5; //set how fast the playe is (should not be less than zero)
 
     this.image = /** @type {HTMLImageElement} */ (document.getElementById('bull'));
     this.spriteWidth = 255;
