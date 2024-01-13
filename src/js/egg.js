@@ -18,7 +18,7 @@ export class Egg {
     this.spriteY = this.collisionY - this.height * 0.8;//subtract?
 
     this.hatchTimer = 0;
-    this.hatchInterval = 1000;
+    this.hatchInterval = 5000;
     this.markedForDeletion = false;
   }
 
@@ -34,8 +34,8 @@ export class Egg {
 
   /** @param {number} deltaTime */
   update(deltaTime) {
-    //handle hatcling of larva
-    if (this.hatchTimer > this.hatchInterval) {
+    //the larva will hatch when the egg has moved to the top edge or when the timer has run out.
+    if (this.hatchTimer > this.hatchInterval || this.collisionY < this.game.topMargin) {
         this.game.hatchlings.push(new Larva(this.game, this.collisionX, this.collisionY));
         this.markedForDeletion = true;
         this.game.removeGameObjects();

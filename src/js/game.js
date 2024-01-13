@@ -4,7 +4,18 @@ import { Egg } from './egg.js';
 import { Enemy } from './enemy.js';
 import { Larva } from './larva.js';
 
+/**
+  * @typedef ICollisional
+  * @property {number} collisionX
+  * @property {number} collisionY
+  * @property {number} collisionRadius
+  */
 
+/**
+  * @typedef IGameObject
+  * @property {(context: CanvasRenderingContext2D) => void} draw
+  * @property {(deltaTime: number) => void} update
+  */
 export class Game {
   /** @param {HTMLCanvasElement} canvas - reference of main canvas*/
   constructor(canvas) {
@@ -27,17 +38,23 @@ export class Game {
     this.numberOfObstacles = 5;
     /** @type {Obstacle[]} */
     this.obstacles = [];
-    this.maxEggs = 15;
+    this.maxEggs = 10; //15
     /**@type {Egg[]} */
-    this.eggs = [];
+    this.eggs = [new Egg(this)];
     this.eggTimer = 0;
-    this.eggInterval = 1000;
+    this.eggInterval = 2000; //2000
     /** @type {Larva[]} */
     this.hatchlings = [];
+    this.lostHatchlings = 0;
+    this.score = 0;
     /**@type {Enemy[]} */
     this.enemies = [];
-    /** @type {(Larva | Egg | Obstacle | Enemy | Player )[]} */
-    this.gameObjects = []
+    /** */
+    /**@type {(import('./particles.js').Firefly | import('./particles.js').Spark)[]} */
+    this.particles = [];
+
+    /** @type {(IGameObject & ICollisional)[]} */
+    this.gameObjects = [];
 
     //fps
     this.fps = 60;
@@ -79,7 +96,7 @@ export class Game {
     // systemise refresh rate
     if (this.timer > this.interval) {
       context.clearRect(0, 0, this.width, this.height);
-      this.gameObjects = [...this.hatchlings, ...this.eggs, ...this.enemies, ...this.obstacles, this.player];
+      this.gameObjects = [...this.particles, ...this.hatchlings, ...this.eggs, ...this.enemies, ...this.obstacles, this.player];
       //sort by vertical position
       this.gameObjects.sort((a, b) => (a.collisionY - b.collisionY));
       this.gameObjects.forEach((object) => {
@@ -113,13 +130,14 @@ export class Game {
       // console.log(this.eggs);
     }
     this.eggTimer += deltaTime;
+
+    //draw status text
+    context.save();
+    context.textAlign = 'left';
+    context.fillText(`score: ${this.score + (this.debug && `lost: ${this.lostHatchlings}`)}`, 0, 30);
+
+    context.restore();
   }
-  /**
-   * @typedef ICollisional
-   * @property {number} collisionX
-   * @property {number} collisionY
-   * @property {number} collisionRadius
-   */
   /**
    * takes obj a and obj b and compare them
    * @param {ICollisional} a 
@@ -156,9 +174,9 @@ export class Game {
     this.enemies.push(new Enemy(this));
   }
   removeGameObjects() {
-    console.log(this.eggs);
     this.eggs = this.eggs.filter((egg) => !egg.markedForDeletion);
     this.hatchlings = this.hatchlings.filter((larva) => !larva.markedForDeletion);
+    this.particles = this.particles.filter((particle) => !particle.markedForDeletion);
   }
   init() {
     for (let i = 0; i < 3; i++) {
