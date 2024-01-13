@@ -3,7 +3,7 @@ export class Enemy {
   constructor(game) {
     this.game = game;
 
-    this.image = /** @type {HTMLImageElement} */ (document.getElementById('toad'));
+    this.image = /** @type {HTMLImageElement} */ (document.getElementById('toads'));
     this.spriteWidth = 140;
     this.spriteHeight = 260;
     this.width = this.spriteWidth;
@@ -11,15 +11,17 @@ export class Enemy {
 
     this.collisionX = this.game.width + this.width + Math.random() * this.game.width * 0.5;;
     this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin));
-    this.collisionRadius = 30;
+    this.collisionRadius = 40;
     this.speedX = Math.random() * 3 + 0.5;
 
     this.spriteX = this.collisionX - this.width * 0.5;
     this.spriteY = this.collisionY - this.height * 0.9;
+    this.frameX = 0;
+    this.frameY = Math.floor(Math.random() * 4); 
   }
   /** @param {CanvasRenderingContext2D} context */
   draw(context) {
-    context.drawImage(this.image, this.spriteX, this.spriteY, this.width, this.height);
+    context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
 
     if (this.game.debug) {
       this.game.drawDebugCircle(this, context);
@@ -32,6 +34,9 @@ export class Enemy {
     if (this.spriteX + this.width < 0) {
       this.collisionX = this.game.width + this.width + Math.random() * this.game.width * 0.5;
       this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin));
+      this.speedX = Math.random() * 3 + 0.5;
+      this.frameY = Math.floor(Math.random() * 4); 
+
     }
 
     let collisionObjects = [this.game.player, ...this.game.obstacles,];
