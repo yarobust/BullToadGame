@@ -6,13 +6,13 @@ export class Enemy {
     this.image = /** @type {HTMLImageElement} */ (document.getElementById('toads'));
     this.spriteWidth = 140;
     this.spriteHeight = 260;
-    this.width = this.spriteWidth;
-    this.height = this.spriteHeight;
+    this.width = this.spriteWidth * this.game.scaleFactor;
+    this.height = this.spriteHeight * this.game.scaleFactor;
 
     this.collisionX = this.game.width + this.width + Math.random() * this.game.width * 0.5;;
     this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin));
-    this.collisionRadius = 40;
-    this.speedX = Math.random() * 3 + 0.5;
+    this.collisionRadius = 40 * this.game.scaleFactor;
+    this.speedX = (Math.random() * 3 + 0.5) * this.game.speedFactor;
 
     this.spriteX = this.collisionX - this.width * 0.5;
     this.spriteY = this.collisionY - this.height * 0.9;

@@ -8,20 +8,20 @@ export class Larva {
   */
   constructor(game, x, y) {
     this.game = game;
-    this.collisionRadius = 30;
+    this.collisionRadius = 30 * this.game.scaleFactor;
     this.collisionX = x;
     this.collisionY = y;
 
     this.image = /** @type {HTMLImageElement} */ (document.getElementById('larva'));
     this.spriteWidth = 150;
     this.spriteHeight = 150;
-    this.width = this.spriteWidth;
-    this.height = this.spriteHeight;
+    this.width = this.spriteWidth * this.game.scaleFactor;
+    this.height = this.spriteHeight * this.game.scaleFactor;
     this.spriteX = this.collisionX - this.width * 0.5;
     this.spriteY = this.collisionY - this.height * 0.775;
     this.frameX = 0;
     this.frameY = Math.round(Math.random());
-    this.speedY = 1 + Math.random();
+    this.speedY = (0.5 + Math.random()) * this.game.speedFactor;
   }
   /** @param {CanvasRenderingContext2D} context */
   draw(context) {

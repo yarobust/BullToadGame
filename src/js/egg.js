@@ -4,7 +4,7 @@ export class Egg {
   /**@param {import("./game.js").Game} game*/
   constructor(game) {
     this.game = game;
-    this.collisionRadius = 40;
+    this.collisionRadius = 40 * this.game.scaleFactor;
     this.margin = this.collisionRadius * 2.5;
     this.collisionX = this.margin + (Math.random() * (game.width - this.margin * 2));
     this.collisionY = this.game.topMargin + this.margin + (Math.random() * (game.height - this.game.topMargin - this.margin * 2));
@@ -12,13 +12,13 @@ export class Egg {
     this.image = /** @type {HTMLImageElement} */ (document.getElementById('egg'));
     this.spriteWidth = 110;
     this.spriteHeight = 135;
-    this.width = this.spriteWidth;
-    this.height = this.spriteHeight;
-    this.spriteX = this.collisionX - this.width * 0.5;//subtract?
-    this.spriteY = this.collisionY - this.height * 0.8;//subtract?
+    this.width = this.spriteWidth * this.game.scaleFactor;
+    this.height = this.spriteHeight * this.game.scaleFactor;
+    this.spriteX = this.collisionX - this.width * 0.5;
+    this.spriteY = this.collisionY - this.height * 0.8;
 
     this.hatchTimer = 0;
-    this.hatchInterval = 5000;
+    this.hatchInterval = 10000; //100000
     this.markedForDeletion = false;
   }
 
