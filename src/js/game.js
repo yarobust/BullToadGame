@@ -20,14 +20,22 @@ export class Game {
   /** @param {HTMLCanvasElement} canvas - reference of main canvas*/
   constructor(canvas) {
     this.debug = true; //for debug purposes
+
+    //fps
+    this.desiredFPS = Math.random() * 40 + 20;
+    this.timer = 0;
+    this.interval = 1000 / this.desiredFPS;
+    this.speedFactor = 60 / this.desiredFPS;
+    // time from 0 to 1000 + deltatime ms
+    this.debugTimer = 0;
     this.frameCount = 0; //for debug purposes
-    this.debugFPS = 0; //for debug purposes
-    this.debugTimer = 0;//for debug purposes
+    this.debugFPS = 0;
 
     this.canvas = canvas;
     this.width = canvas.width;
     this.height = canvas.height;
-    this.topMargin = 260;
+    this.scaleFactor = this.width / 1280;
+    this.topMargin = 260 * this.scaleFactor;
     this.player = new Player(this);
     this.mouse = {
       x: this.width * 0.5,
@@ -41,7 +49,7 @@ export class Game {
     this.numberOfObstacles = 5;
     /** @type {Obstacle[]} */
     this.obstacles = [];
-    this.maxEggs = 10; //15
+    this.maxEggs = 10; //10
     /**@type {Egg[]} */
     this.eggs = [new Egg(this)];
     this.eggTimer = 0;
@@ -58,11 +66,6 @@ export class Game {
 
     /** @type {(IGameObject & ICollisional)[]} */
     this.gameObjects = [];
-
-    //fps
-    this.fps = 60;
-    this.timer = 0;
-    this.interval = 1000 / this.fps;
 
     //event listeners
     canvas.addEventListener('mousedown', e => {
@@ -82,8 +85,8 @@ export class Game {
       }
     });
 
-    //for debug purposes
     window.addEventListener('keydown', (e) => {
+      //for debug purposes
       if (e.key === 'Control') {
         this.debug = !this.debug;
       } else if (this.gameOver && e.key === 'r') {
@@ -96,7 +99,7 @@ export class Game {
    * @param {number} deltaTime
   */
   render(context, deltaTime) {
-    this.debugTimer += deltaTime; //debug
+    this.debugTimer += deltaTime;
 
     // systemise refresh rate
     if (this.timer > this.interval) {
@@ -108,22 +111,6 @@ export class Game {
         object.draw(context);
         object.update(this.interval);
       });
-      this.timer %= this.interval;
-
-      //for debug purposes
-      if (this.debug) {
-        if (this.debugTimer >= 1000) {
-          this.debugFPS = this.frameCount;
-          this.frameCount = 0;
-          this.debugTimer %= 1000;
-        }
-        this.frameCount++;
-        context.save();
-        context.fillStyle = 'red';
-        context.textAlign = 'left';
-        context.fillText(`fps: ${this.debugFPS}`, 0, 100)
-        context.restore();
-      }
 
       //draw status text
       context.save();
@@ -154,6 +141,23 @@ export class Game {
         context.restore();
         this.gameOver = true;
       }
+
+      //for debug purposes
+      if (this.debug) {
+        if (this.debugTimer >= 1000) {
+          this.debugFPS = this.frameCount;
+          this.frameCount = 0;
+          this.debugTimer %= 1000;
+        }
+        this.frameCount++;
+        context.save();
+        context.fillStyle = 'red';
+        context.textAlign = 'left';
+        context.fillText(`fps: ${this.debugFPS}`, 0, 100)
+        context.restore();
+      }
+
+      this.timer %= this.interval;
     }
     this.timer += deltaTime;
 
@@ -251,7 +255,7 @@ export class Game {
       y: this.height * 0.5,
       pressed: false
     }
-    
+
     this.player.reset();
     this.init();
     this.gameOver = false;

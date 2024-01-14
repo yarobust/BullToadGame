@@ -5,14 +5,14 @@ export class Player {
     //hitbox|start position
     this.collisionX = this.game.width * 0.5;
     this.collisionY = this.game.height * 0.5;
-    this.collisionRadius = 35;
-    this.speedModifier = 5; //set how fast the playe is (should not be less than zero)
+    this.collisionRadius = 35 * this.game.scaleFactor;
+    this.speedModifier = 3 * this.game.scaleFactor * this.game.speedFactor; //set how fast the playe is (should not be less than zero)
 
     this.image = /** @type {HTMLImageElement} */ (document.getElementById('bull'));
     this.spriteWidth = 255;
     this.spriteHeight = 256;
-    this.width = this.spriteWidth;
-    this.height = this.spriteHeight;
+    this.width = this.spriteWidth * this.game.scaleFactor;
+    this.height = this.spriteHeight * this.game.scaleFactor;
     this.spriteX = this.collisionX - this.width * 0.5;
     this.spriteY = this.collisionY - this.height * 0.85;
     this.frameX = 0;
@@ -22,7 +22,7 @@ export class Player {
   /** @param {CanvasRenderingContext2D} context */
   draw(context) {
     context.drawImage(this.image, Math.floor(this.frameX) * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
-    if(this.game.debug){
+    if (this.game.debug) {
       this.game.drawDebugCircle(this, context);
       //leading line
       context.beginPath();
@@ -30,9 +30,8 @@ export class Player {
       context.lineTo(this.game.mouse.x, this.game.mouse.y);
       context.stroke();
     }
-    
   }
-  update() {
+  update(deltatime) {
     const dx = this.game.mouse.x - this.collisionX;
     const dy = this.game.mouse.y - this.collisionY;
     const distance = Math.hypot(dx, dy);
@@ -40,11 +39,14 @@ export class Player {
       const speedX = dx / distance;
       const speedY = dy / distance;
       this.collisionX += speedX * this.speedModifier; //move to if(distance > this.speedmodifier)
-    this.collisionY += speedY * this.speedModifier; //move to if(distance > this.speedmodifier)
+      this.collisionY += speedY * this.speedModifier; //move to if(distance > this.speedmodifier)
     }
-    
+
     //sprite animation|direction
-    this.frameX === 58 ? this.frameX = 0 : this.frameX += 0.5;
+    this.frameX += 0.5 * this.game.speedFactor;
+    if (this.frameX > 58) {
+      this.frameX = 0
+    }
     const angle = Math.atan2(dy, dx); //move to if(distance > this.speedmodifier)
     if (angle < -2.74 || angle >= 2.74) this.frameY = 6;
     else if (angle < -1.96) this.frameY = 7;
@@ -62,9 +64,9 @@ export class Player {
     else if (this.collisionY > this.game.height - this.collisionRadius) this.collisionY = this.game.height - this.collisionRadius;
 
     //collision player with obstacles
-    this.game.obstacles.forEach(obstacle=>{
+    this.game.obstacles.forEach(obstacle => {
       const [collision, distance, sumOfRadii, dx, dy] = this.game.checkCollision(this, obstacle);
-      if(collision){ //!!!
+      if (collision) { //!!!
         const unit_x = dx / distance;
         const unit_y = dy / distance;
         // console.log(unit_x, unit_y);

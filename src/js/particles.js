@@ -9,13 +9,13 @@ class Particle {
     this.game = game;
     this.collisionX = x;
     this.collisionY = y;
-    this.collisionRadius = Math.floor(Math.random() * 10 + 5);
-    
-    this.speedX = Math.random() * 6 - 3;
-    this.speedY = Math.random() * 2 + 0.5;
+    this.collisionRadius = Math.floor(Math.random() * 10 + 5) * this.game.scaleFactor;
+
+    this.speedX = (Math.random() * 6 - 3) * this.game.speedFactor;
+    this.speedY = (Math.random() * 2 + 0.5) * this.game.speedFactor;
     this.angle = 0;
     //angle velocity
-    this.va = Math.random() * 0.1 + 0.01;
+    this.va = (Math.random() * this.game.speedFactor * 0.1 + 0.01);
     this.markedForDeletion = false;
     this.color = color;
   }

@@ -1,26 +1,36 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-#canvas1{
+#game-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#canvas1 {
   background: url('../../img/background.png');
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  background-size: cover;
+  display: block;
 }
 
-#overlay{
+#overlay {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  /* remove intrefere with mouse events on canvas */
-  pointer-events: none; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
-#obstacles, #bull, #egg, #toad, #toads, #larva{
+#obstacles,
+#bull,
+#egg,
+#toad,
+#toads,
+#larva {
   display: none;
 }

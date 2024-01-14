@@ -4,8 +4,15 @@ window.addEventListener('load', function () {
   const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('canvas1'));
   const ctx = /** @type {CanvasRenderingContext2D}*/ (canvas.getContext('2d'));
   //set up inital dimensions
-  canvas.width = 1280;
-  canvas.height = 720;
+
+  const ratio = 1280 / 720;
+  if (innerWidth / innerHeight <= ratio) {
+    canvas.width = innerWidth;
+    canvas.height = innerWidth / ratio;
+  } else {
+    canvas.width = innerHeight * ratio;
+    canvas.height = innerHeight;
+  }
 
   ctx.fillStyle = 'white';
   ctx.lineWidth = 3;
@@ -16,10 +23,9 @@ window.addEventListener('load', function () {
   //creaet instance of a game
   const game = new Game(canvas);
   game.init();
-  console.log(game);
   
-  let lastTime = 0;
 
+  let lastTime = 0;
   function animate(timeStamp) {
     const deltaTime = timeStamp - lastTime
     lastTime = timeStamp;
